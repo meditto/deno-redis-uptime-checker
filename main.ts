@@ -11,6 +11,8 @@ async function CheckRedisUptime() {
         await client.quit();
         if (pong !== 'PONG') {
             throw new Error('Redis is not running');
+        } else {
+            console.log('REDIS PING SUCCESS ' + new Date().toISOString());
         }
     } catch (error) {
         console.error('REDIS PING ERROR', error);
