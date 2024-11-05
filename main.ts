@@ -1,5 +1,7 @@
 import 'jsr:@std/dotenv/load';
 import { createClient } from 'npm:redis@^4.5';
+import InfoParser from 'npm:redis-info';
+
 async function CheckRedisUptime() {
     try {
         const client = createClient({
@@ -14,7 +16,13 @@ async function CheckRedisUptime() {
         } else {
             // get the current memory usage
             const memory = await client.info('memory');
-            console.log('REDIS PING SUCCESS ' + new Date().toISOString() + ' memory:' + memory);
+            const info = InfoParser.parse(memory);
+            console.log(
+                'REDIS PING SUCCESS ' +
+                    new Date().toISOString() +
+                    ' memory:' +
+                    info.fields.used_memory_human
+            );
             await client.quit();
         }
     } catch (error) {
