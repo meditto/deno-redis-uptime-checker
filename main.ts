@@ -14,34 +14,33 @@ async function CheckRedisUptime() {
             await client.quit();
             throw new Error('Redis is not running');
         } else {
-            // get the current memory usage
             const memory = await client.info('memory');
             const info = InfoParser.parse(memory);
             console.log(
                 'REDIS PING SUCCESS ' +
                     new Date().toISOString() +
                     ' memory:' +
-                    info.fields.used_memory_human
+                    info.used_memory_human
             );
             await client.quit();
         }
     } catch (error) {
         console.error('REDIS PING ERROR', error);
-        // await SendPageM('Redis is not running');
+        await SendPageM('Redis is not running');
     }
 }
 
-// async function SendPageM(message: string) {
-//     const response = await fetch('https://www.pagem.com/api/v2/page/send', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/x-www-form-urlencoded',
-//             authentication: Deno.env.get('PAGEM_API_KEY')
-//         },
-//         body: `id=${Deno.env.get('PAGEM_API_ID')}&message=${message}`
-//     });
-//     const data = await response.json();
-//     console.log(data);
-// }
+async function SendPageM(message: string) {
+    const response = await fetch('https://www.pagem.com/api/v2/page/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            authentication: Deno.env.get('PAGEM_API_KEY')
+        },
+        body: `id=${Deno.env.get('PAGEM_API_ID')}&message=${message}`
+    });
+    const data = await response.json();
+    console.log(data);
+}
 
-Deno.cron('Run once a minute', '* * * * *', CheckRedisUptime);
+Deno.cron('Run once a minute', '*/5 * * * *', CheckRedisUptime);
