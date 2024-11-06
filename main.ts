@@ -26,7 +26,7 @@ async function CheckRedisUptime() {
         }
     } catch (error) {
         console.error('REDIS PING ERROR', error);
-        await SendPageM('Redis is not running');
+        await SendPageM(`${Deno.env.get('REDIS_SERVER_NAME')} is not running`);
     }
 }
 
