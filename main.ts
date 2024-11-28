@@ -17,17 +17,19 @@ async function CheckRedisUptime() {
             const memory = await client.info('memory');
             const info = InfoParser.parse(memory);
             console.log(
-                Deno.env.get('REDIS_SERVER_NAME') +
-                    ' is running. time: ' +
-                    new Date().toISOString() +
-                    ' - memory: ' +
+                [
+                    Deno.env.get('REDIS_SERVER_NAME'),
+                    'is running. time:',
+                    new Date().toISOString(),
+                    '- memory:',
                     info.used_memory_human
+                ].join(' ')
             );
             await client.quit();
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error('REDIS PING ERROR', error);
-        await SendPageM(`${Deno.env.get('REDIS_SERVER_NAME')} is not running`);
+        await SendPageM(`${Deno.env.get('REDIS_SERVER_NAME')} is not running, ${error?.message}`);
     }
 }
 
